@@ -12,12 +12,12 @@ export_file_url = 'https://www.dropbox.com/s/1cwi42rnfffvkps/export.pkl?dl=1'
 export_file_name = 'export.pkl'
 
 classes = ['pos', 'neg']
-#path = Path(__file__).parent
-path = pathlib.Path(__file__).parent
+path = Path(__file__).parent
+#path = pathlib.Path(__file__).parent
 
 app = Starlette()
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_headers=['X-Requested-With', 'Content-Type'])
-app.mount('app/static', StaticFiles(directory='static'))
+#app.mount('app/static', StaticFiles(directory='static'))
 
 
 async def download_file(url, dest):
