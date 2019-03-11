@@ -1,22 +1,23 @@
-from starlette.applications import Starlette
 from starlette.responses import HTMLResponse, JSONResponse
+from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 import uvicorn, aiohttp, asyncio
-from io import BytesIO
+import sys
+import pathlib
 
-from fastai import *
-from fastai.vision import *
+from fastai.text import *
 
-export_file_url = 'https://www.dropbox.com/s/v6cuuvddq73d1e0/export.pkl?raw=1'
+export_file_url = 'https://www.dropbox.com/s/1cwi42rnfffvkps/export.pkl?dl=1'
 export_file_name = 'export.pkl'
 
-classes = ['black', 'grizzly', 'teddys']
-path = Path(__file__).parent
+classes = ['pos', 'neg']
+#path = Path(__file__).parent
+path = pathlib.Path(__file__).parent
 
 app = Starlette()
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_headers=['X-Requested-With', 'Content-Type'])
-app.mount('/static', StaticFiles(directory='app/static'))
+app.mount('/static', StaticFiles(directory='static'))
 
 async def download_file(url, dest):
     if dest.exists(): return
@@ -51,10 +52,10 @@ def index(request):
 @app.route('/analyze', methods=['POST'])
 async def analyze(request):
     data = await request.form()
-    img_bytes = await (data['file'].read())
-    img = open_image(BytesIO(img_bytes))
-    prediction = learn.predict(img)[0]
+    text = data['text']
+    prediction = learn.predict(text)[0]
     return JSONResponse({'result': str(prediction)})
 
 if __name__ == '__main__':
     if 'serve' in sys.argv: uvicorn.run(app=app, host='0.0.0.0', port=5042)
+#uvicorn.run(app=app, host='0.0.0.0', port=5042)
